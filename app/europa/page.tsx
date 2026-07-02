@@ -32,7 +32,7 @@ export default async function EuropaPage() {
       {/* Divisore dorato personalizzato invece dell'hr standard */}
       <div className="divider-gold"></div>
 
-      <h2 className="h4 fw-bold mb-4 section-title">Articoli dinamici da Strapi</h2>
+      <h2 className="h4 fw-bold mb-4 section-title">Scegli la tua prossima destinazione</h2>
       <div className="row g-4 mt-2">
         {articoli.length === 0 ? (
           <p className="text-muted">Nessun articolo trovato per questa destinazione.</p>
