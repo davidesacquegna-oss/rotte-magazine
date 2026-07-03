@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 // Funzione che interroga le API di Strapi
 async function getArticoliEuropa() {
-  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://127.0.0.1:1337'}/api/articles?populate=*&filters[destinazione][$in][0]=Italia&filters[destinazione][$in][1]=Islanda`;
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}/api/articles?populate=*&filters[destinazione][$in][0]=Italia&filters[destinazione][$in][1]=Islanda`;
   
   try {
     const res = await fetch(url, { cache: 'no-store' }); // Evita cache per vedere subito le modifiche di Strapi
@@ -54,7 +54,7 @@ export default async function EuropaPage() {
                   
                   <div className="bg-secondary-subtle text-center text-muted small border-bottom" style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                     {imgUrl ? (
-                      <img src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://127.0.0.1:1337'}${imgUrl}`} alt={campi.titolo} className="w-100 h-100 object-fit-cover" />
+                      <img src={`${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}${imgUrl}`} alt={campi.titolo} className="w-100 h-100 object-fit-cover" />
                     ) : (
                       <span>📸 {campi.titolo}</span>
                     )}
