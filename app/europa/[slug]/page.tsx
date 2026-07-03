@@ -9,7 +9,7 @@ const descrizioniBackup: Record<string, string> = {
 };
 
 async function getArticoloSingolo(slug: string) {
-  const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://127.0.0.1:1337'}/api/articles?filters[slug][$eq]=${slug}&populate=*`;
+  const url = `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}/api/articles?filters[slug][$eq]=${slug}&populate=*`;
   
   try {
     const res = await fetch(url, { cache: 'no-store' });
@@ -64,7 +64,7 @@ export default async function ArticoloEuropaPage({ params }: ParamProps) {
       {imgUrl && (
         <div className="mb-5 rounded overflow-hidden shadow-sm" style={{ height: '400px' }}>
           <img 
-            src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://127.0.0.1:1337'}${imgUrl}`} 
+            src={`${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}${imgUrl}`} 
             alt={articolo.titolo} 
             className="w-100 h-100 object-fit-cover"
           />
