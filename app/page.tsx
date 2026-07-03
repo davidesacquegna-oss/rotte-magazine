@@ -18,6 +18,8 @@ import Sidebar from '@/components/Sidebar';
 import BootstrapClient from '@/components/BootstrapClient';
 import PopoverInit from '@/components/PopoverInit';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * page.tsx è un Server Component: tutto il fetch avviene server-side,
  * nessun dato sensibile (es. token Strapi) viene esposto al browser.
