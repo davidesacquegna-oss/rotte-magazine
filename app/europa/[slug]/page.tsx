@@ -10,7 +10,7 @@ const descrizioniBackup: Record<string, string> = {
 
 async function getArticoloSingolo(slug: string) {
   const url = `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}/api/articles?filters[slug][$eq]=${slug}&populate=*`;
-  
+  console.log("--- URL CHIAMATO DA NEXT.JS: ---", url);
   try {
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) return null;
