@@ -64,7 +64,7 @@ export default async function ArticoloEuropaPage({ params }: ParamProps) {
       {imgUrl && (
         <div className="mb-5 rounded overflow-hidden shadow-sm" style={{ height: '400px' }}>
           <img 
-            src={`{imgUrl}`} 
+            src={imgUrl}
             alt={articolo.titolo} 
             className="w-100 h-100 object-fit-cover"
           />

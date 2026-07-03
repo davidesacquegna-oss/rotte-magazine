@@ -54,7 +54,7 @@ export default async function EuropaPage() {
                   
                   <div className="bg-secondary-subtle text-center text-muted small border-bottom" style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                     {imgUrl ? (
-                      <img src={`${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}${imgUrl}`} alt={campi.titolo} className="w-100 h-100 object-fit-cover" />
+                      <img src={imgUrl} alt={campi.titolo} className="w-100 h-100 object-fit-cover" />
                     ) : (
                       <span>📸 {campi.titolo}</span>
                     )}
@@ -78,7 +78,7 @@ export default async function EuropaPage() {
                     <div className="d-flex justify-content-between align-items-center mt-3 pt-2" style={{ borderTop: '1px solid var(--sand)' }}>
                       <span className="text-muted small">👁 {campi.visite || 0} letture</span>
                       {/* Pulsante outline personalizzato */}
-                      <Link href={`/europa/${campi.slug}`} className="btn-rotte-outline">
+                      <Link href={`/articoli/${campi.slug}`} className="btn-rotte-outline">
                         Leggi rotta →
                       </Link>
                     </div>
