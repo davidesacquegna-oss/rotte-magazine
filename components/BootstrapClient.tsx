@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 export default function BootstrapClient() {
   useEffect(() => {
     // Dynamic import per evitare SSR crash
+    // @ts-ignore
     import('bootstrap/dist/js/bootstrap.bundle.min.js').catch(() => {
       // fallback: carica da CDN se il pacchetto npm non è installato
       const script = document.createElement('script');
