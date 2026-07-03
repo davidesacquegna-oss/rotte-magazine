@@ -43,8 +43,8 @@ export default async function ArticoloEuropaPage({ params }: ParamProps) {
   return (
     <article className="container py-5" style={{ maxWidth: '800px' }}>
       <div className="mb-4">
-        <Link href="/europa" className="text-muted text-decoration-none small">
-          ← Torna all&apos;elenco Europa
+        <Link href={`/${articolo.destinazione}`} className="text-muted text-decoration-none small">
+          ← Torna all&apos;elenco {articolo.destinazione}
         </Link>
       </div>
 
@@ -64,7 +64,7 @@ export default async function ArticoloEuropaPage({ params }: ParamProps) {
       {imgUrl && (
         <div className="mb-5 rounded overflow-hidden shadow-sm" style={{ height: '400px' }}>
           <img 
-            src={`${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}${imgUrl}`} 
+            src={`{imgUrl}`} 
             alt={articolo.titolo} 
             className="w-100 h-100 object-fit-cover"
           />
