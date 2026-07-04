@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 // Funzione che interroga le API di Strapi
 async function getArticoliEuropa() {
   const url = `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://127.0.0.1:1337'}/api/articles?populate=*&filters[destinazione][$in][0]=Italia&filters[destinazione][$in][1]=Islanda`;
