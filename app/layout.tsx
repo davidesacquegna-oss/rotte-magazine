@@ -1,4 +1,4 @@
-'use client'; // <-- Diventa un componente client solo per gestire il controllo del backend
+'use client'; // layout
 
 import { useEffect, useState } from 'react';
 import './globals.css';
@@ -18,8 +18,11 @@ export default function RootLayout({
 
   useEffect(() => {
     const svegliaBackend = async () => {
-      // Interroghiamo le API chiedendo 0 elementi per non sprecare dati, serve solo a svegliarlo
-      const url = `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/articles?pagination[limit]=0`;
+      // process.env non è disponibile nel browser a runtime.
+      // NEXT_PUBLIC_* viene sostituita staticamente al build — in dev può
+      // risultare "undefined" se il bundle è stato compilato senza .env.local.
+      // Usiamo una route API interna /api/ping che legge la URL server-side.
+      const url = '/api/ping';
       
       while (true) {
         try {
