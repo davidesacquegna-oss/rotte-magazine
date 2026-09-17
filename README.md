@@ -32,7 +32,7 @@ rotte-magazine/
 └── .env.local.example
 ```
 
-## Setup rapido
+## Setup rapid
 
 ### 1. Installa le dipendenze
 
