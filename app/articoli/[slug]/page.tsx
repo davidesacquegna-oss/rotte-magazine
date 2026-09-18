@@ -76,7 +76,7 @@ export default async function ArticoloEuropaPage({ params }: ParamProps) {
         {testoArticolo}
       </div>
 
-      <footer className="mt-5 pt-4 border-top text-center text-muted small">
+      <footer className="mt-5 py-2 border-top text-center small ">
         Fine del diario di viaggio di Rotte. • Destinazione: {articolo.destinazione}
       </footer>
     </article>

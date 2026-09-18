@@ -298,6 +298,7 @@ footer .footer-divider { border-color: #333; }
 .bg-ink { background-color: var(--ink); }
 .sidebar-sticky { position: sticky; top: 1.5rem; }
 
+
 /* ── NUMERI LISTA ── */
 .bi-1-circle-fill::before { content: "①"; }
 .bi-2-circle-fill::before { content: "②"; }
