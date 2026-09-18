@@ -7,6 +7,7 @@ import type {
   ImpostazioneGenerale,
   StrapiListResponse,
   StrapiSingleResponse,
+  PianoAbbonamento,
 } from '@/types/strapi';
 
 const STRAPI_URL =
@@ -161,5 +162,21 @@ export async function creaAbbonamento(data: {
     return res.ok;
   } catch {
     return false;
+  }
+}
+
+// @/lib/strapi.ts
+export async function getPianiAbbonamento(): Promise<PianoAbbonamento[]> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/piano-abbonamentos?populate=caratteristiche`,
+      { next: { revalidate: 3600 } }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.data || []; // Forziamo un array vuoto se data.data è null/undefined
+  } catch (error) {
+    console.error("Errore nel recupero dei piani:", error);
+    return [];
   }
 }

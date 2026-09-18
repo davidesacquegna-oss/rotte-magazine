@@ -121,3 +121,24 @@ export interface StrapiSingleResponse<T> {
   data: T;
   meta: Record<string, unknown>;
 }
+
+// ── Strapi Caratteristica ──────────────────────────────────────────────────────
+
+export interface Caratteristica {
+  id: number;
+  testo: string;
+}
+
+// ── Strapi Piano Abbonamento ──────────────────────────────────────────────────────
+
+export interface PianoAbbonamento {
+  id: number;
+  documentId?: string; // Strapi v5
+  titolo: string;
+  slug: 'digital' | 'carta';
+  prezzo: number;
+  frequenza: string;
+  popolare?: boolean;
+  richiedeIndirizzo?: boolean;
+  caratteristiche: Caratteristica[];
+}

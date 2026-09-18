@@ -1,19 +1,39 @@
 'use client';
 
-import { useState } from 'react';
-import { creaAbbonamento } from '@/lib/strapi';
+import { useState, useEffect } from 'react';
+import { creaAbbonamento, getPianiAbbonamento } from '@/lib/strapi';
+import { PianoAbbonamento } from '@/types/strapi';
 
 export default function ModalAbbonamento() {
-  const [piano, setPiano] = useState<'digital' | 'carta'>('carta');
+  const [piani, setPiani] = useState<PianoAbbonamento[]>([]);
+  const [pianoSelezionato, setPianoSelezionato] = useState<PianoAbbonamento | null>(null);
+  
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [indirizzo, setIndirizzo] = useState('');
   const [stato, setStato] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
 
+  // Load piani da Strapi
+  useEffect(() => {
+    getPianiAbbonamento().then((data) => {
+      setPiani(data);
+      if (data.length > 0) {
+        // Seleziona di default quello "popolare" oppure il primo
+        const defaultPiano = data.find((p) => p.popolare) || data[0];
+        setPianoSelezionato(defaultPiano);
+      }
+    });
+  }, []);
+
   async function handlePagamento() {
-    if (!nome || !email) return;
+    if (!nome || !email || !pianoSelezionato) return;
     setStato('loading');
-    const ok = await creaAbbonamento({ nome, email, indirizzo, piano });
+    const ok = await creaAbbonamento({
+      nome,
+      email,
+      indirizzo: pianoSelezionato.richiedeIndirizzo ? indirizzo : '',
+      piano: pianoSelezionato.slug,
+    });
     setStato(ok ? 'ok' : 'error');
   }
 
@@ -25,12 +45,7 @@ export default function ModalAbbonamento() {
             <h5 className="modal-title">
               <i className="bi bi-newspaper me-2"></i>Abbonati a Rotte Magazine
             </h5>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Chiudi"
-            ></button>
+            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
           </div>
           <div className="modal-body p-4">
             {stato === 'ok' ? (
@@ -41,67 +56,56 @@ export default function ModalAbbonamento() {
               </div>
             ) : (
               <>
-                {/* Scelta piano */}
+                {/* Rendering Dinamico Piani */}
                 <div className="row g-4">
-                  {/* Digital */}
-                  <div className="col-md-6">
-                    <div
-                      className={`card card-rotte p-3 h-100 border-2${piano === 'digital' ? ' border-terracotta' : ''}`}
-                      style={{ borderColor: piano === 'digital' ? 'var(--terracotta)' : 'var(--sand)', cursor: 'pointer' }}
-                      onClick={() => setPiano('digital')}
-                    >
-                      <h6 style={{ fontFamily: 'var(--serif)', fontSize: '1.1rem' }}>Digital</h6>
-                      <p className="fw-bold fs-4 mb-1" style={{ color: 'var(--terracotta)' }}>
-                        €29<span style={{ fontSize: '.8rem', fontWeight: 400, color: 'var(--muted)' }}>/anno</span>
-                      </p>
-                      <ul className="list-unstyled small text-muted">
-                        <li><i className="bi bi-check-circle text-terracotta me-1"></i>Accesso illimitato al sito</li>
-                        <li><i className="bi bi-check-circle text-terracotta me-1"></i>Archivio completo (10 anni)</li>
-                        <li><i className="bi bi-check-circle text-terracotta me-1"></i>Newsletter premium</li>
-                        <li><i className="bi bi-check-circle text-terracotta me-1"></i>PDF scaricabili</li>
-                      </ul>
-                      <button
-                        className={piano === 'digital' ? 'btn-rotte-primary mt-2' : 'btn-rotte-outline mt-2'}
-                        onClick={(e) => { e.stopPropagation(); setPiano('digital'); }}
-                      >
-                        Scegli Digital
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Carta + Digital */}
-                  <div className="col-md-6">
-                    <div
-                      className={`card card-rotte p-3 h-100 border-2`}
-                      style={{ borderColor: 'var(--terracotta)', cursor: 'pointer' }}
-                      onClick={() => setPiano('carta')}
-                    >
-                      <div className="d-flex justify-content-between align-items-start">
-                        <h6 style={{ fontFamily: 'var(--serif)', fontSize: '1.1rem' }}>Carta + Digital</h6>
-                        <span className="badge badge-dest">Popolare</span>
+                  {piani.map((p) => {
+                    const isSelected = pianoSelezionato?.id === p.id;
+                    return (
+                      <div className="col-md-6" key={p.id}>
+                        <div
+                          className={`card card-rotte p-3 h-100 border-2 ${isSelected ? 'border-terracotta' : ''}`}
+                          style={{
+                            borderColor: isSelected ? 'var(--terracotta)' : 'var(--sand)',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => setPianoSelezionato(p)}
+                        >
+                          <div className="d-flex justify-content-between align-items-start">
+                            <h6 style={{ fontFamily: 'var(--serif)', fontSize: '1.1rem' }}>{p.titolo}</h6>
+                            {p.popolare && <span className="badge badge-dest">Popolare</span>}
+                          </div>
+                          <p className="fw-bold fs-4 mb-1" style={{ color: 'var(--terracotta)' }}>
+                            €{p.prezzo}
+                            <span style={{ fontSize: '.8rem', fontWeight: 400, color: 'var(--muted)' }}>
+                              {p.frequenza}
+                            </span>
+                          </p>
+                          <ul className="list-unstyled small text-muted">
+                            {p.caratteristiche?.map((item) => (
+                              <li key={item.id}>
+                                <i className="bi bi-check-circle text-terracotta me-1"></i>
+                                {item.testo}
+                              </li>
+                            ))}
+                          </ul>
+                          <button
+                            className={isSelected ? 'btn-rotte-primary mt-2' : 'btn-rotte-outline mt-2'}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPianoSelezionato(p);
+                            }}
+                          >
+                            Scegli {p.titolo}
+                          </button>
+                        </div>
                       </div>
-                      <p className="fw-bold fs-4 mb-1" style={{ color: 'var(--terracotta)' }}>
-                        €49<span style={{ fontSize: '.8rem', fontWeight: 400, color: 'var(--muted)' }}>/anno</span>
-                      </p>
-                      <ul className="list-unstyled small text-muted">
-                        <li><i className="bi bi-check-circle text-terracotta me-1"></i>Rivista cartacea (6 numeri)</li>
-                        <li><i className="bi bi-check-circle text-terracotta me-1"></i>Tutto il piano Digital</li>
-                        <li><i className="bi bi-check-circle text-terracotta me-1"></i>Guida omaggio a scelta</li>
-                        <li><i className="bi bi-check-circle text-terracotta me-1"></i>Accesso a eventi esclusivi</li>
-                      </ul>
-                      <button
-                        className={piano === 'carta' ? 'btn-rotte-primary mt-2' : 'btn-rotte-outline mt-2'}
-                        onClick={(e) => { e.stopPropagation(); setPiano('carta'); }}
-                      >
-                        Scegli Carta + Digital
-                      </button>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
 
                 <hr className="divider-gold" />
 
-                {/* Form dati */}
+                {/* Form Dati */}
                 <h6 className="fw-bold mb-3" style={{ fontFamily: 'var(--serif)' }}>
                   Dati per l&apos;abbonamento
                 </h6>
@@ -126,7 +130,7 @@ export default function ModalAbbonamento() {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  {piano === 'carta' && (
+                  {pianoSelezionato?.richiedeIndirizzo && (
                     <div className="col-12">
                       <label className="form-label small">Indirizzo di spedizione</label>
                       <input
@@ -151,18 +155,14 @@ export default function ModalAbbonamento() {
 
           {stato !== 'ok' && (
             <div className="modal-footer border-top" style={{ borderColor: 'var(--sand)' }}>
-              <button
-                type="button"
-                className="btn-rotte-outline"
-                data-bs-dismiss="modal"
-              >
+              <button type="button" className="btn-rotte-outline" data-bs-dismiss="modal">
                 Annulla
               </button>
               <button
                 type="button"
                 className="btn-rotte-primary"
                 onClick={handlePagamento}
-                disabled={stato === 'loading'}
+                disabled={stato === 'loading' || !pianoSelezionato}
               >
                 {stato === 'loading' ? 'Elaborazione…' : 'Procedi al pagamento →'}
               </button>
